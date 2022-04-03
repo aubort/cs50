@@ -41,7 +41,7 @@ class TestTicTacToe(unittest.TestCase):
 
     def test_actions(self):
         """
-        Test player turn
+        Test player action
         """
         board = [[EMPTY, EMPTY, EMPTY],
                 [EMPTY, EMPTY, EMPTY],
@@ -70,6 +70,39 @@ class TestTicTacToe(unittest.TestCase):
         actions = set()
         
         self.assertEqual(ttt.actions(board), actions)
+
+    def test_result(self):
+        """
+        Test result
+        """
+        board = [[X, EMPTY, EMPTY],
+                [EMPTY, EMPTY, EMPTY],
+                [EMPTY, EMPTY, EMPTY]]
+
+        # Illegal move
+        self.assertRaises(Exception, ttt.result, board, (0,0))
+
+        # Player X
+        board = [[X, O, EMPTY],
+                [EMPTY, EMPTY, EMPTY],
+                [EMPTY, EMPTY, EMPTY]]
+
+        board_result = [[X, O, EMPTY],
+                [EMPTY, EMPTY, EMPTY],
+                [EMPTY, X, EMPTY]]
+        
+        self.assertListEqual(ttt.result(board, (2,1)), board_result)
+
+        # Player O
+        board = [[X, O, EMPTY],
+                [EMPTY, O, EMPTY],
+                [EMPTY, X, EMPTY]]
+
+        board_result = [[X, O, X],
+                [EMPTY, O, EMPTY],
+                [EMPTY, X, EMPTY]]
+        
+        self.assertListEqual(ttt.result(board, (0,2)), board_result)
 
 if __name__ == '__main__':
     unittest.main()
