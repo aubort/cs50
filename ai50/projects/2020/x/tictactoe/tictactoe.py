@@ -67,25 +67,61 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+    
+    winning_arrangements = [
+        [(0,0), (0,1), (0,2)],
+        [(1,0), (1,1), (1,2)],
+        [(2,0), (2,1), (2,2)],
+        [(0,0), (1,0), (2,0)],
+        [(0,1), (1,1), (2,1)],
+        [(0,2), (1,2), (2,2)],
+        [(0,0), (1,1), (2,2)],
+        [(0,2), (1,1), (2,0)]]
 
+    winner = None
+    for arr in winning_arrangements:
+        winner = get_cell_value(board, arr[0])
+        if get_cell_value(board, arr[1]) != winner or get_cell_value(board, arr[2]) != winner:
+            winner = None
+        else:
+            return winner
+    return None
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    sum_empty_cells = sum(row.count(EMPTY) for row in board)
 
+    if winner(board) != None or sum_empty_cells == 0:
+        return True
+
+    return False
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
 
+    # score = 0
+    win = winner(board)
+
+    if win == X: return 1
+    if win == O: return -1
+
+    return 0
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
     raise NotImplementedError
+
+
+def get_cell_value(board, coordinates):
+    """
+    Returns the value in a cell of the board, based on a coordinates tuple (i,j).
+    """
+    #Improvement Add Checks on coordinates
+
+    return board[coordinates[0]][coordinates[1]]
