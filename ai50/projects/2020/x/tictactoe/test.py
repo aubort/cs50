@@ -179,6 +179,19 @@ class TestTicTacToe(unittest.TestCase):
         self.assertEqual(ttt.get_cell_value(board, (1, 1)), 'E')
         self.assertEqual(ttt.get_cell_value(board, (0, 2)), 'C')
 
+    def test_minimax(self):
+
+        board = [[EMPTY, X, O],
+                [O, X, EMPTY],
+                [X, EMPTY, O]]
+        ttt.minimax(board)
+
+    # def test_print_board(self):
+
+    #     board = [[EMPTY, X, O],
+    #             [O, X, X],
+    #             [X, EMPTY, O]]
+    #     ttt.print_board(board)
 
 if __name__ == '__main__':
     unittest.main()

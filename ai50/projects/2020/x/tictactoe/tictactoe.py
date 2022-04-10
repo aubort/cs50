@@ -115,13 +115,80 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    v = 0
+    best_action = None
 
+    if terminal(board):
+        return None
+
+    current_player = player(board)
+    print("player="+ current_player)
+
+    for action in actions(board):
+        # print(action)
+        if winner(result(board, action)) != None:
+            # print("We have a winner!" ,action)        
+            return action
+
+    for action in actions(board):        
+        resulting_board = result(board, action)
+
+        if best_action == None:
+            best_action = action
+
+        if current_player == X:
+            print("X playing")
+
+            print(max_value(resulting_board))
+            if max_value(resulting_board) == 1:
+                best_action = action
+                break
+                # return action
+        else:
+            print("O playing")
+
+            if min_value(resulting_board) == -1:
+                best_action = action
+                break
+
+    # print("best action=", best_action)
+
+    return best_action
+
+def max_value(board):
+
+    # https://stackoverflow.com/questions/7781260/how-can-i-represent-an-infinite-number-in-python
+    # https://cs50.harvard.edu/ai/2020/notes/0/
+    v = -float("inf")
+
+    if terminal(board):
+        return utility(board)
+    
+    for action in actions(board):
+        v = max(v, min_value(result(board, action)))    
+    return v
+
+def min_value(board):
+    v = float("inf")
+
+    if terminal(board):
+        return utility(board)
+    
+    for action in actions(board):
+        v = min(v, max_value(result(board, action)))
+    return v
 
 def get_cell_value(board, coordinates):
     """
     Returns the value in a cell of the board, based on a coordinates tuple (i,j).
     """
     #Improvement Add Checks on coordinates
-
     return board[coordinates[0]][coordinates[1]]
+
+def print_board(board):
+    """
+    Print the 3 rows of the board
+    """
+    print('\n')
+    for i in board:
+        print(i)    
