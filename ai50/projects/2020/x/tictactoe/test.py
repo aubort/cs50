@@ -181,17 +181,11 @@ class TestTicTacToe(unittest.TestCase):
 
     def test_minimax(self):
 
-        board = [[EMPTY, X, O],
+        #One move to win
+        board = [[X, X, O],
                 [O, X, EMPTY],
                 [X, EMPTY, O]]
         ttt.minimax(board)
-
-    # def test_print_board(self):
-
-    #     board = [[EMPTY, X, O],
-    #             [O, X, X],
-    #             [X, EMPTY, O]]
-    #     ttt.print_board(board)
-
+        
 if __name__ == '__main__':
     unittest.main()

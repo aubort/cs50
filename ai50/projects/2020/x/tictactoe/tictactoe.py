@@ -1,13 +1,16 @@
 """
 Tic Tac Toe Player
+Part of AI50 course
+
+author: Pascal Aubort, 12 Apr 2022
 """
 
-import math, copy
+import math, copy, logging
 
 X = "X"
 O = "O"
 EMPTY = None
-
+logging.basicConfig(level=logging.INFO)
 
 def initial_state():
     """
@@ -115,20 +118,13 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    v = 0
     best_action = None
-
+    
     if terminal(board):
         return None
 
     current_player = player(board)
-    print("player="+ current_player)
-
-    for action in actions(board):
-        # print(action)
-        if winner(result(board, action)) != None:
-            # print("We have a winner!" ,action)        
-            return action
+    logging.info("Current player="+current_player)
 
     for action in actions(board):        
         resulting_board = result(board, action)
@@ -137,25 +133,25 @@ def minimax(board):
             best_action = action
 
         if current_player == X:
-            print("X playing")
+            logging.info("X playing")
+            min_value = get_min_value(resulting_board) 
+            logging.info("action=" + str(action) + "; min_value="+str(min_value))
 
-            print(max_value(resulting_board))
-            if max_value(resulting_board) == 1:
+            if min_value == 1:
                 best_action = action
-                break
-                # return action
+
         else:
-            print("O playing")
+            logging.info("O playing")
+            max_value = get_max_value(resulting_board)
+            logging.info("action=" + str(action) + "; max_value="+str(max_value))
 
-            if min_value(resulting_board) == -1:
+            if max_value == -1:
                 best_action = action
-                break
-
-    # print("best action=", best_action)
-
+        
+    logging.info("Best Action="+str(best_action) + "\n")
     return best_action
 
-def max_value(board):
+def get_max_value(board):
 
     # https://stackoverflow.com/questions/7781260/how-can-i-represent-an-infinite-number-in-python
     # https://cs50.harvard.edu/ai/2020/notes/0/
@@ -165,17 +161,19 @@ def max_value(board):
         return utility(board)
     
     for action in actions(board):
-        v = max(v, min_value(result(board, action)))    
+        v = max(v, get_min_value(result(board, action)))
+
     return v
 
-def min_value(board):
+def get_min_value(board):
     v = float("inf")
 
     if terminal(board):
         return utility(board)
     
     for action in actions(board):
-        v = min(v, max_value(result(board, action)))
+        v = min(v, get_max_value(result(board, action)))
+
     return v
 
 def get_cell_value(board, coordinates):
