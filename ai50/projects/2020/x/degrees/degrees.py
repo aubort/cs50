@@ -4,7 +4,7 @@ import logging
 
 from util import Node, StackFrontier, QueueFrontier
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 # Maps names to a set of corresponding person_ids
@@ -66,15 +66,17 @@ def main():
     load_data(directory)
     print("Data loaded.")
 
-    # source = person_id_for_name(input("Name: "))
-    # if source is None:
-    #     sys.exit("Person not found.")
-    # target = person_id_for_name(input("Name: "))
-    # if target is None:
-    #     sys.exit("Person not found.")
+    source = person_id_for_name(input("Name: "))
+    if source is None:
+        sys.exit("Person not found.")
+    target = person_id_for_name(input("Name: "))
+    if target is None:
+        sys.exit("Person not found.")
 
-    source = person_id_for_name("Kevin Bacon")
-    target = person_id_for_name("Chris Sarandon")
+
+    # Useful for testing
+    # source = person_id_for_name("Kevin Bacon")
+    # target = person_id_for_name("Tom Hanks")
 
     path = shortest_path(source, target)
 
@@ -102,7 +104,7 @@ def shortest_path(source, target):
     stack_frontier = StackFrontier()
     explored = set()
     path = []
-    logging.info(f'Source actor is {people[source]["name"]} ({source}) and initial movies are {people[source]["movies"]}')
+    logging.debug(f'Source actor is {people[source]["name"]} ({source}) and initial movies are {people[source]["movies"]}')
 
     # add initial node to the frontier
     # Node state = the actor
@@ -120,7 +122,7 @@ def shortest_path(source, target):
 
         # Check if it's the solution
         if current_node.state == target:
-            logging.info("Connection found between {source} and {target}")
+            logging.debug("Connection found between {source} and {target}")
             
             while current_node.parent is not None:
                 path.insert(0, (current_node.action, current_node.state))       
