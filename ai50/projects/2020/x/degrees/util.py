@@ -26,6 +26,9 @@ class StackFrontier():
             self.frontier = self.frontier[:-1]
             return node
 
+    def get_size(self):
+        return len(self.frontier)
+
 
 class QueueFrontier(StackFrontier):
 

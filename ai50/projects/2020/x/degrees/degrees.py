@@ -1,7 +1,11 @@
 import csv
 import sys
+import logging
 
 from util import Node, StackFrontier, QueueFrontier
+
+logging.basicConfig(level=logging.DEBUG)
+
 
 # Maps names to a set of corresponding person_ids
 names = {}
@@ -62,12 +66,15 @@ def main():
     load_data(directory)
     print("Data loaded.")
 
-    source = person_id_for_name(input("Name: "))
-    if source is None:
-        sys.exit("Person not found.")
-    target = person_id_for_name(input("Name: "))
-    if target is None:
-        sys.exit("Person not found.")
+    # source = person_id_for_name(input("Name: "))
+    # if source is None:
+    #     sys.exit("Person not found.")
+    # target = person_id_for_name(input("Name: "))
+    # if target is None:
+    #     sys.exit("Person not found.")
+
+    source = person_id_for_name("Kevin Bacon")
+    target = person_id_for_name("Chris Sarandon")
 
     path = shortest_path(source, target)
 
@@ -92,8 +99,47 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO
-    raise NotImplementedError
+    stack_frontier = StackFrontier()
+    explored = set()
+    path = []
+    logging.info(f'Source actor is {people[source]["name"]} ({source}) and initial movies are {people[source]["movies"]}')
+
+    # add initial node to the frontier
+    # Node state = the actor
+    # Node action = the movie
+    stack_frontier.add(Node(state=source, parent=None, action=None))
+
+    while True:
+        
+        if stack_frontier.empty():
+            raise Exception('No Solution found')
+        
+        # Explore next node in the frontier
+        current_node = stack_frontier.remove()
+        logging.debug(f"current_node={current_node.state}")
+
+        # Check if it's the solution
+        if current_node.state == target:
+            logging.info("Connection found between {source} and {target}")
+            
+            while current_node.parent is not None:
+                path.insert(0, (current_node.action, current_node.state))       
+
+                current_node = current_node.parent
+            return path
+
+        # Add to the explored set
+        explored.add(current_node.state) 
+
+        # For each connection (returned from neighbors_for_person function) 
+        # create a node and add it to the frontier. Unless it is already in 
+        # the frontier or it has been explored.
+        for movie, person in neighbors_for_person(current_node.state):
+            logging.debug(f'Movie:{movie}, Person:{person}')
+            if not stack_frontier.contains_state(person) and person not in explored:
+                stack_frontier.add(Node(state=person, parent=current_node, action=movie))
+
+    return None
 
 
 def person_id_for_name(name):
