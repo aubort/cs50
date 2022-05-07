@@ -73,7 +73,6 @@ def main():
     if target is None:
         sys.exit("Person not found.")
 
-
     # Useful for testing
     # source = person_id_for_name("Kevin Bacon")
     # target = person_id_for_name("Tom Hanks")
