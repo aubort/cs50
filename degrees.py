@@ -4,7 +4,7 @@ import logging
 
 from util import Node, StackFrontier, QueueFrontier
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.disable)
 
 
 # Maps names to a set of corresponding person_ids
@@ -101,45 +101,50 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    stack_frontier = StackFrontier()
+    queue_frontier = QueueFrontier()
     explored = set()
     path = []
-    logging.debug(f'Source actor is {people[source]["name"]} ({source}) and initial movies are {people[source]["movies"]}')
+    logging.info(f'Source actor is {people[source]["name"]} ({source}) and initial movies are {people[source]["movies"]}')
 
     # add initial node to the frontier
     # Node state = the actor
     # Node action = the movie
-    stack_frontier.add(Node(state=source, parent=None, action=None))
+    queue_frontier.add(Node(state=source, parent=None, action=None))
 
     while True:
         
-        if stack_frontier.empty():
+        if queue_frontier.empty():
             raise Exception('No Solution found')
         
         # Explore next node in the frontier
-        current_node = stack_frontier.remove()
+        current_node = queue_frontier.remove()
         logging.debug(f"current_node={current_node.state}")
-
-        # Check if it's the solution
-        if current_node.state == target:
-            logging.debug("Connection found between {source} and {target}")
-            
-            while current_node.parent is not None:
-                path.insert(0, (current_node.action, current_node.state))       
-
-                current_node = current_node.parent
-            return path
-
-        # Add to the explored set
-        explored.add(current_node.state) 
-
+        
         # For each connection (returned from neighbors_for_person function) 
         # create a node and add it to the frontier. Unless it is already in 
         # the frontier or it has been explored.
         for movie, person in neighbors_for_person(current_node.state):
             logging.debug(f'Movie:{movie}, Person:{person}')
-            if not stack_frontier.contains_state(person) and person not in explored:
-                stack_frontier.add(Node(state=person, parent=current_node, action=movie))
+            
+            if not queue_frontier.contains_state(person) and person not in explored:
+
+                # Check if the current node is the target person
+                if person == target:
+                    logging.info(f"Connection found between {source} and {target}")
+                    
+                    # Add the last node to the path without creating a Node object
+                    path = [(movie, person)]
+
+                    # Create the path going to the initial node
+                    while current_node.parent is not None:
+                        path.insert(0, (current_node.action, current_node.state))       
+                        current_node = current_node.parent
+                    return path
+
+                queue_frontier.add(Node(state=person, parent=current_node, action=movie))
+
+        # Add to the explored set
+        explored.add(current_node.state) 
 
     return None
 
